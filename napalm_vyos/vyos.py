@@ -66,6 +66,7 @@ class VyOSDriver(NetworkDriver):
             'secret': '',
             'verbose': False,
             'global_delay_factor': 1,
+            'read_timeout_override': None,
             'use_keys': False,
             'key_file': None,
             'ssh_strict': False,
@@ -138,7 +139,7 @@ class VyOSDriver(NetworkDriver):
         if os.path.exists(cfg_filename) is True:
             self._scp_client.scp_transfer_file(cfg_filename, self._DEST_FILENAME)
             self.device.send_command("cp "+self._BOOT_FILENAME+" "+self._BACKUP_FILENAME)
-            output_loadcmd = self.device.send_config_set(['load '+self._DEST_FILENAME])
+            output_loadcmd = self.device.send_config_set(['load '+self._DEST_FILENAME], read_timeout=25)
             match_loaded = re.findall("Load complete.", output_loadcmd)
             match_notchanged = re.findall("No configuration changes to commit", output_loadcmd)
             match_failed = re.findall("Failed to parse specified config file", output_loadcmd)
